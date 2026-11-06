@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DeliveryPro | Administrador</title>
+  <link rel="stylesheet" href="css/global.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { display: flex; height: 100vh; overflow: hidden; background: #0F172A; font-family: 'Inter', sans-serif; color: white; }
+
+    /* SIDEBAR */
+    .sidebar { width: 260px; background: #1E293B; display: flex; flex-direction: column; padding: 20px 0; flex-shrink: 0; border-right: 1px solid #334155; }
+    .brand { font-size: 1.5rem; font-weight: 800; padding: 0 20px; margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
+    .brand span { color: #FF5A5F; }
+    .menu-item { padding: 15px 20px; display: flex; align-items: center; gap: 15px; color: #94A3B8; font-weight: 600; cursor: pointer; transition: 0.2s; border: none; background: transparent; width: 100%; text-align: left; font-size: 1rem; }
+    .menu-item:hover, .menu-item.active { background: #334155; color: white; border-left: 4px solid #FF5A5F; }
+    
+    .profile-card { margin-top: auto; background: #334155; padding: 15px; border-radius: 12px; display: flex; align-items: center; gap: 12px; margin: 20px; }
+    .profile-avatar { width: 45px; height: 45px; background: #FF5A5F; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; }
+    .profile-name { font-weight: 700; font-size: 0.95rem; }
+    .profile-role { font-size: 0.75rem; color: #94A3B8; }
+
+    /* MAIN CONTENT */
+    .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .content { padding: 30px; overflow-y: auto; flex: 1; }
+    .header-title h1 { font-size: 2rem; margin-bottom: 5px; }
+    .header-title p { color: #94A3B8; margin-bottom: 30px; }
+
+    /* TARJETAS DE MÉTRICAS */
+    .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
+    .metric-card { background: #1E293B; padding: 25px; border-radius: 16px; border: 1px solid #334155; }
+    .metric-title { color: #94A3B8; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 10px; }
+    .metric-value { font-size: 2.2rem; font-weight: 800; color: white; }
+    .metric-icon { font-size: 2rem; margin-bottom: 10px; }
+
+    /* TABLAS */
+    .table-container { background: #1E293B; border-radius: 16px; border: 1px solid #334155; overflow: hidden; margin-bottom: 30px; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { background: #0F172A; padding: 15px 20px; color: #94A3B8; font-size: 0.85rem; text-transform: uppercase; }
+    td { padding: 15px 20px; border-top: 1px solid #334155; color: #E2E8F0; }
+    .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
+    .status-verificado { background: #064E3B; color: #34D399; }
+    .status-pendiente { background: #78350F; color: #FBBF24; }
+    .btn-action { background: #FF5A5F; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.8rem; }
+    .btn-action:hover { background: #E0484D; }
+    .btn-success { background: #10B981; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.8rem; }
+    .btn-success:hover { background: #059669; }
+
+    /* VISTAS */
+    .view { display: none !important; }
+    .view.active { display: block !important; }
+
+    /* CONFIGURACIÓN DE PRECIOS */
+    .config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .config-box { background: #1E293B; padding: 30px; border-radius: 16px; border: 1px solid #334155; }
+    .config-box h3 { margin-bottom: 20px; color: #FF5A5F; }
+    .config-form .form-group { margin-bottom: 15px; }
+    .config-form label { display: block; margin-bottom: 8px; color: #94A3B8; font-size: 0.9rem; }
+    .config-form input { width: 100%; padding: 12px; background: #0F172A; border: 1px solid #334155; border-radius: 8px; color: white; font-family: inherit; outline: none; }
+    .config-form input:focus { border-color: #FF5A5F; }
+    .btn-save { background: #FF5A5F; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="brand"><span>🇬🇹</span> Delivery<span>Pro</span></div>
+    <button class="menu-item active" onclick="cambiarSeccion('dashboard', this)"><span>📊</span> Dashboard Global</button>
+    <button class="menu-item" onclick="cambiarSeccion('finanzas', this)"><span>💰</span> Finanzas y Pagos</button>
+    <button class="menu-item" onclick="cambiarSeccion('monitoreo', this)"><span>📍</span> Monitoreo en Vivo</button>
+    <button class="menu-item" onclick="cambiarSeccion('comercios', this)"><span>🏪</span> Gestión de Comercios</button>
+    <button class="menu-item" onclick="cambiarSeccion('repartidores', this)"><span>🛵</span> Repartidores</button>
+    <button class="menu-item" onclick="cambiarSeccion('soporte', this)"><span>🎧</span> Call Center / Soporte</button>
+    <button class="menu-item" onclick="cambiarSeccion('config', this)"><span>⚙️</span> Configuración Global</button>
+    
+    <div class="profile-card">
+      <div class="profile-avatar">A</div>
+      <div class="profile-info">
+        <div class="profile-name">Admin Principal</div>
+        <div class="profile-role">Super Administrador</div>
+      </div>
+      <button onclick="cerrarSesion(event)" style="background:none; border:none; color:#94A3B8; font-size:1.2rem; cursor:pointer;">⏻</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="content">
+      
+      <!-- VISTA: DASHBOARD GLOBAL -->
+      <section id="view-dashboard" class="view active">
+        <div class="header-title"><h1>Dashboard Global</h1><p>Métricas de toda la plataforma DeliveryPro.</p></div>
+        
+        <div class="metrics-grid">
+          <div class="metric-card"><div class="metric-icon">👥</div><div class="metric-title">Usuarios Totales</div><div class="metric-value" id="metric-usuarios">0</div></div>
+          <div class="metric-card"><div class="metric-icon">🏪</div><div class="metric-title">Comercios Activos</div><div class="metric-value" id="metric-comercios">0</div></div>
+          <div class="metric-card"><div class="metric-icon">🛵</div><div class="metric-title">Repartidores</div><div class="metric-value" id="metric-repartidores">0</div></div>
+          <div class="metric-card"><div class="metric-icon">💰</div><div class="metric-title">Ingresos Totales</div><div class="metric-value" id="metric-ingresos">$0</div></div>
+        </div>
+
+        <div class="header-title"><h2 style="font-size:1.3rem;">Últimos Pedidos Registrados</h2></div>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Orden</th><th>Cliente</th><th>Comercio</th><th>Total</th><th>Estado</th><th>Fecha</th></tr></thead>
+            <tbody id="tabla-ultimos-pedidos"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VISTA: FINANZAS Y PAGOS -->
+      <section id="view-finanzas" class="view">
+        <div class="header-title"><h1>Finanzas y Pagos</h1><p>Controla los ingresos de los comercios y repartidores.</p></div>
+        
+        <div class="header-title"><h2 style="font-size:1.3rem;">Comercios por Pagar</h2></div>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Comercio</th><th>Pedidos</th><th>Ingresos Brutos</th><th>Comisión (10%)</th><th>A Pagar</th><th>Acción</th></tr></thead>
+            <tbody id="tabla-pagos"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VISTA: MONITOREO EN VIVO -->
+      <section id="view-monitoreo" class="view">
+        <div class="header-title"><h1>Monitoreo en Vivo</h1><p>Supervisa todos los viajes y entregas activas.</p></div>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Orden</th><th>Comercio</th><th>Cliente</th><th>Repartidor</th><th>Estado</th><th>Distancia</th></tr></thead>
+            <tbody id="tabla-monitoreo"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VISTA: GESTIÓN DE COMERCIOS -->
+      <section id="view-comercios" class="view">
+        <div class="header-title"><h1>Gestión de Comercios</h1><p>Verifica y administra los comercios registrados.</p></div>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Comercio</th><th>Tipo</th><th>Dueño</th><th>Estado</th><th>Acciones</th></tr></thead>
+            <tbody id="tabla-comercios"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VISTA: REPARTIDORES -->
+      <section id="view-repartidores" class="view">
+        <div class="header-title"><h1>Gestión de Repartidores</h1><p>Verifica documentos y activa repartidores.</p></div>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Repartidor</th><th>Vehículo</th><th>Documentos</th><th>Acciones</th></tr></thead>
+            <tbody id="tabla-repartidores"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VISTA: SOPORTE TÉCNICO -->
+      <section id="view-soporte" class="view">
+        <div class="header-title"><h1>Call Center / Soporte</h1><p>Gestiona tickets y crea cuentas de agentes.</p></div>
+        
+        <div class="metrics-grid" style="grid-template-columns: 1fr 1fr;">
+          <div class="metric-card"><div class="metric-title">Tickets Pendientes</div><div class="metric-value" style="color:#FBBF24;">12</div></div>
+          <div class="metric-card"><div class="metric-title">Tickets Resueltos (Hoy)</div><div class="metric-value" style="color:#34D399;">45</div></div>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead><tr><th>ID Ticket</th><th>Cliente</th><th>Asunto</th><th>Estado</th><th>Acción</th></tr></thead>
+            <tbody>
+              <tr><td>#T-001</td><td>Juan Pérez</td><td>Pedido no llegó</td><td><span class="status-badge status-pendiente">Pendiente</span></td><td><button class="btn-action">Atender</button></td></tr>
+              <tr><td>#T-002</td><td>Pizzería Don Benavides</td><td>Problema con cobro</td><td><span class="status-badge status-verificado">Resuelto</span></td><td><button class="btn-success">Ver</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VISTA: CONFIGURACIÓN GLOBAL -->
+      <section id="view-config" class="view">
+        <div class="header-title"><h1>Configuración Global</h1><p>Ajusta los precios de la plataforma.</p></div>
+        
+        <div class="config-grid">
+          <div class="config-box">
+            <h3>Precio por Kilometraje</h3>
+            <form class="config-form" onsubmit="guardarPrecios(event)">
+              <div class="form-group">
+                <label>Tarifa Base (Q)</label>
+                <input type="number" id="precio-base" value="2.00" step="0.01">
+              </div>
+              <div class="form-group">
+                <label>Precio por Km (Q)</label>
+                <input type="number" id="precio-km" value="0.50" step="0.01">
+              </div>
+              <button type="submit" class="btn-save">Guardar Cambios</button>
+            </form>
+          </div>
+          
+          <div class="config-box">
+            <h3>Crear Agente de Soporte</h3>
+            <form class="config-form" onsubmit="crearAgente(event)">
+              <div class="form-group">
+                <label>Nombre del Agente</label>
+                <input type="text" placeholder="Ej: Carlos Call Center" required>
+              </div>
+              <div class="form-group">
+                <label>Correo Electrónico</label>
+                <input type="email" placeholder="agente@deliverypro.com" required>
+              </div>
+              <button type="submit" class="btn-save" style="background:#10B981;">Crear Cuenta de Agente</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>

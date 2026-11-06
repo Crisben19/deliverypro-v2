@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DeliveryPro | Tu delivery y mensajería en Guatemala</title>
+  <link rel="stylesheet" href="css/global.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #F8FAFC; color: #1E293B; }
+    
+    /* NAVBAR */
+    .navbar { background: white; padding: 15px 0; position: fixed; width: 100%; top: 0; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    .navbar .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+    .brand { font-size: 1.6rem; font-weight: 800; color: #1E293B; display: flex; align-items: center; gap: 8px; }
+    .brand span { color: #FF5A5F; }
+    .nav-buttons { display: flex; gap: 15px; }
+    .btn-nav-outline { background: transparent; border: 2px solid #FF5A5F; color: #FF5A5F; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+    .btn-nav-outline:hover { background: #FFF5F5; }
+    .btn-nav-solid { background: #FF5A5F; border: 2px solid #FF5A5F; color: white; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+    .btn-nav-solid:hover { background: #E0484D; border-color: #E0484D; }
+
+    /* HERO */
+    .hero { background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.85)), url('https://images.unsplash.com/photo-1543336489-3a91e9e578c0?q=80&w=2070&auto=format&fit=crop'); background-size: cover; background-position: center; min-height: 100vh; display: flex; align-items: center; padding: 100px 0 50px 0; color: white; }
+    .hero-content { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    .hero-text h1 { font-size: 3.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 20px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+    .hero-text .highlight { color: #38BDF8; }
+    .hero-text .eslogan { font-size: 1.5rem; font-weight: 600; color: #E2E8F0; margin-bottom: 15px; font-style: italic; }
+    .hero-text p { font-size: 1.1rem; color: #CBD5E1; max-width: 500px; margin-bottom: 30px; }
+    .hero-form { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); color: #1E293B; }
+    .hero-form h2 { font-size: 1.8rem; margin-bottom: 10px; color: #1E293B; }
+    .hero-form p { font-size: 0.9rem; color: #64748B; margin-bottom: 25px; }
+    .hero-form .form-group { margin-bottom: 15px; }
+    .hero-form label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.85rem; color: #475569; }
+    .hero-form input, .hero-form select { width: 100%; padding: 12px; border: 1px solid #E2E8F0; border-radius: 8px; font-family: inherit; font-size: 1rem; outline: none; }
+    .hero-form input:focus, .hero-form select:focus { border-color: #FF5A5F; }
+    .btn-form { width: 100%; padding: 14px; background: #FF5A5F; color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+    .btn-form:hover { background: #E0484D; }
+
+    /* SECCIONES GENERALES */
+    section { padding: 80px 0; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    .section-title { font-size: 2.5rem; text-align: center; margin-bottom: 15px; font-weight: 800; color: #1E293B; }
+    .section-subtitle { text-align: center; color: #64748B; margin-bottom: 50px; font-size: 1.1rem; }
+
+    /* CÓMO FUNCIONA */
+    .como-funciona { background: white; }
+    .pasos-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; text-align: center; }
+    .paso-icon { font-size: 3rem; margin-bottom: 15px; background: #FFF5F5; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; }
+    .paso h3 { font-size: 1.1rem; margin-bottom: 10px; color: #1E293B; }
+    .paso p { font-size: 0.9rem; color: #64748B; }
+
+    /* SOCIOS */
+    .socios { background: #F8FAFC; }
+    .socios-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+    .socios-text h2 { font-size: 2.2rem; margin-bottom: 20px; color: #1E293B; }
+    .socios-text p { color: #64748B; margin-bottom: 20px; line-height: 1.6; }
+    .socios-list { list-style: none; margin-bottom: 30px; }
+    .socios-list li { margin-bottom: 10px; color: #475569; display: flex; align-items: center; gap: 10px; }
+    .socios-list li::before { content: '✅'; }
+    .btn-socios { padding: 14px 30px; background: #1E293B; color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+    .btn-socios:hover { background: #0F172A; }
+    .socios-img { width: 100%; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
+
+    /* MARCAS */
+    .marcas { background: white; padding: 40px 0; }
+    .marcas-grid { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; opacity: 0.6; font-weight: 800; color: #475569; font-size: 1.5rem; }
+
+    /* FAQ */
+    .faq { background: #F8FAFC; }
+    .faq-item { background: white; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden; }
+    .faq-question { padding: 20px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: #1E293B; }
+    .faq-answer { padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease; color: #64748B; font-size: 0.95rem; }
+    .faq-item.open .faq-answer { max-height: 200px; padding-bottom: 20px; }
+
+    /* MODAL AUTH */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: flex-start; padding-top: 80px; z-index: 3000; backdrop-filter: blur(4px); overflow-y: auto; }
+    .modal-overlay.active { display: flex; }
+    .auth-box { background: white; width: 420px; border-radius: 20px; padding: 40px; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.3); max-height: 85vh; overflow-y: auto; margin-bottom: 50px; }
+    .auth-box .close-btn { position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748B; }
+    .auth-box h2 { text-align: center; margin-bottom: 20px; color: #1E293B; }
+    .social-buttons { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .social-btn { padding: 12px; border-radius: 8px; border: 1px solid #E2E8F0; background: white; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; font-family: inherit; }
+    .social-btn:hover { background: #F8FAFC; }
+    .divider { text-align: center; color: #94A3B8; margin: 20px 0; font-size: 0.85rem; position: relative; }
+    .divider::before, .divider::after { content: ''; position: absolute; top: 50%; width: 40%; height: 1px; background: #E2E8F0; }
+    .divider::before { left: 0; } .divider::after { right: 0; }
+    .auth-box .form-group { margin-bottom: 15px; }
+    .auth-box input { width: 100%; padding: 12px; border: 1px solid #E2E8F0; border-radius: 8px; font-family: inherit; font-size: 1rem; outline: none; }
+    .auth-box input:focus { border-color: #FF5A5F; }
+    .btn-auth { width: 100%; padding: 14px; background: #FF5A5F; color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+    .btn-auth:hover { background: #E0484D; }
+    .auth-switch { text-align: center; margin-top: 20px; font-size: 0.9rem; color: #64748B; }
+    .auth-switch a { color: #FF5A5F; font-weight: 600; cursor: pointer; text-decoration: none; }
+
+    /* FOOTER */
+    .footer { background: #0F172A; color: white; padding: 40px 0; text-align: center; }
+    .footer p { color: #64748B; margin-top: 10px; }
+
+    @media (max-width: 900px) {
+      .hero-content { grid-template-columns: 1fr; text-align: center; }
+      .hero-text h1 { font-size: 2.5rem; }
+      .hero-form { margin: 0 auto; width: 100%; max-width: 400px; }
+      .pasos-grid { grid-template-columns: 1fr 1fr; }
+      .socios-grid { grid-template-columns: 1fr; }
+      .nav-buttons .btn-nav-outline { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="brand"><span>🇬🇹</span> Delivery<span>Pro</span></div>
+      <div class="nav-buttons">
+        <button class="btn-nav-outline" onclick="abrirAuth('login')">Iniciar Sesión</button>
+        <button class="btn-nav-solid" onclick="abrirAuth('registro')">Regístrate</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1>Tu delivery y mensajería <br><span class="highlight">en minutos</span></h1>
+        <p class="eslogan">"Conectamos tu antojo con tu puerta, rápido y seguro."</p>
+        <p>Comida, farmacias, supermercados y más. Todo lo que necesitas, entregado por repartidores de confianza en toda Guatemala.</p>
+      </div>
+
+      <!-- FORMULARIO FLOTANTE -->
+      <div class="hero-form">
+        <h2>¡Regístrate ahora!</h2>
+        <p>Únete a la red de delivery más grande de Guatemala.</p>
+        <form id="form-rapido" onsubmit="registroRapido(event)">
+          <div class="form-group">
+            <label>Nombre Completo</label>
+            <input type="text" id="rapido-nombre" placeholder="Tu nombre" required>
+          </div>
+          <div class="form-group">
+            <label>Correo Electrónico</label>
+            <input type="email" id="rapido-email" placeholder="tu@correo.com" required>
+          </div>
+          <div class="form-group">
+            <label>Teléfono</label>
+            <input type="tel" id="rapido-telefono" placeholder="5555-5555" required>
+          </div>
+          <div class="form-group">
+            <label>¿Qué tipo de usuario eres?</label>
+            <select id="rapido-rol" required>
+              <option value="cliente">Cliente (Quiero pedir)</option>
+              <option value="restaurante">Comercio (Quiero vender)</option>
+              <option value="repartidor">Repartidor (Quiero entregar)</option>
+            </select>
+          </div>
+          <!-- AQUI VA EL CAPTCHA CON TU LLAVE NUEVA -->
+          <div class="g-recaptcha" data-sitekey="6LdDWgwuAAAAAFjNpaYb7lpAV4_dFHvu_rISTwjZ" data-action="LOGIN" style="margin-bottom: 15px;"></div>
+          
+          <button type="submit" class="btn-form">Quiero ser parte de DeliveryPro 🚀</button>
+        </form>
+      </div>
+    </div>
+  </header>
+
+  <!-- CÓMO FUNCIONA -->
+  <section class="como-funciona">
+    <div class="container">
+      <h2 class="section-title">¿Cómo funciona?</h2>
+      <p class="section-subtitle">Pedir es así de fácil</p>
+      <div class="pasos-grid">
+        <div class="paso"><div class="paso-icon">1️⃣</div><h3>Elige tu comercio</h3><p>Explora restaurantes, farmacias y más cerca de ti.</p></div>
+        <div class="paso"><div class="paso-icon">2️⃣</div><h3>Arma tu pedido</h3><p>Selecciona productos y personaliza tus opciones.</p></div>
+        <div class="paso"><div class="paso-icon">3️⃣</div><h3>Paga seguro</h3><p>Efectivo o tarjeta, con código PIN de seguridad.</p></div>
+        <div class="paso"><div class="paso-icon">4️⃣</div><h3>Rastrea en vivo</h3><p>Mira el mapa y recibe tu pedido en minutos.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOCIOS -->
+  <section class="socios">
+    <div class="container socios-grid">
+      <div class="socios-text">
+        <h2>¡Haz crecer tu negocio con DeliveryPro!</h2>
+        <p>Únete a nuestra red de socios y llega a miles de clientes en toda Guatemala. Aumenta tus ventas sin invertir en publicidad.</p>
+        <ul class="socios-list">
+          <li>Comisión del 10% por pedido</li>
+          <li>Panel de control con estadísticas</li>
+          <li>Pagos semanales garantizados</li>
+          <li>Soporte 24/7 para socios</li>
+        </ul>
+        <button class="btn-socios" onclick="abrirAuth('registro')">Registra tu Local Ahora</button>
+      </div>
+      <div>
+        <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=1000&auto=format&fit=crop" alt="Socio DeliveryPro" class="socios-img">
+      </div>
+    </div>
+  </section>
+
+  <!-- MARCAS -->
+  <section class="marcas">
+    <div class="container">
+      <p style="text-align:center; color:#64748B; margin-bottom:20px; font-size:0.9rem; text-transform:uppercase; letter-spacing:1px;">Marcas que confían en nosotros</p>
+      <div class="marcas-grid">
+        <div>McDonald's</div>
+        <div>Burger King</div>
+        <div>Domino's</div>
+        <div>Subway</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq">
+    <div class="container">
+      <h2 class="section-title">Preguntas Frecuentes</h2>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">¿Cuánto cuesta el envío? <span>▼</span></div>
+        <div class="faq-answer"><p>El costo de envío se calcula según la distancia entre el comercio y tu ubicación. Empieza desde Q2.00 + Q0.50 por km.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">¿Cómo se que mi pedido es seguro? <span>▼</span></div>
+        <div class="faq-answer"><p>Cada pedido tiene un código PIN de 4 dígitos. Solo el cliente lo conoce y debe dárselo al repartidor al momento de la entrega.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">¿Puedo vender en DeliveryPro si no tengo local físico? <span>▼</span></div>
+        <div class="faq-answer"><p>¡Claro! Puedes registrarte como "cocina fantasma" o emprendimiento desde casa. Solo necesitas cumplir con los requisitos fiscales.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL AUTH -->
+  <div id="modal-auth" class="modal-overlay">
+    <div class="auth-box">
+      <button class="close-btn" onclick="cerrarAuth()">&times;</button>
+      
+      <!-- LOGIN -->
+      <div id="auth-login">
+        <h2>Bienvenido de nuevo</h2>
+        <div class="social-buttons">
+          <button class="social-btn" onclick="loginSocial('Google')">🇬 Continuar con Google</button>
+          <button class="social-btn" onclick="loginSocial('Outlook')">📧 Continuar con Outlook</button>
+          <button class="social-btn" onclick="loginSocial('Yahoo')">📨 Continuar con Yahoo</button>
+        </div>
+        <div class="divider">o usa tu correo</div>
+        <form onsubmit="loginManual(event)">
+          <div class="form-group"><input type="email" id="login-email" placeholder="Correo electrónico" required></div>
+          <div class="form-group"><input type="password" id="login-password" placeholder="Contraseña" required></div>
+          <button type="submit" class="btn-auth">Iniciar Sesión</button>
+        </form>
+        <p class="auth-switch">¿No tienes cuenta? <a onclick="cambiarAuth('registro')">Regístrate aquí</a></p>
+      </div>
+
+      <!-- REGISTRO -->
+      <div id="auth-registro" style="display: none;">
+        <h2>Crea tu cuenta</h2>
+        <div class="social-buttons">
+          <button class="social-btn" onclick="loginSocial('Google')">🇬 Registrarme con Google</button>
+          <button class="social-btn" onclick="loginSocial('Outlook')">📧 Registrarme con Outlook</button>
+          <button class="social-btn" onclick="loginSocial('Yahoo')">📨 Registrarme con Yahoo</button>
+        </div>
+        <div class="divider">o regístrate con tu correo</div>
+        <form onsubmit="registroManual(event)">
+          <div class="form-group"><input type="text" id="reg-nombre" placeholder="Nombre completo" required></div>
+          <div class="form-group"><input type="email" id="reg-email" placeholder="Correo electrónico" required></div>
+          <div class="form-group"><input type="tel" id="reg-telefono" placeholder="Teléfono" required></div>
+          <div class="form-group"><input type="password" id="reg-password" placeholder="Contraseña" required></div>
+          <div class="form-group">
+            <select id="reg-rol" style="width:100%; padding:12px; border:1px solid #E2E8F0; border-radius:8px; font-family:inherit; font-size:1rem;">
+              <option value="cliente">Soy Cliente</option>
+              <option value="restaurante">Soy Comercio</option>
+              <option value="repartidor">Soy Repartidor</option>
+            </select>
+          </div>
+          <!-- AQUI VA EL CAPTCHA CON TU LLAVE NUEVA -->
+          <div class="g-recaptcha" data-sitekey="6LdDWgwuAAAAAFjNpaYb7lpAV4_dFHvu_rISTwjZ" data-action="LOGIN" style="margin-bottom: 15px;"></div>
+          
+          <button type="submit" class="btn-auth">Crear Cuenta</button>
+        </form>
+        <p class="auth-switch">¿Ya tienes cuenta? <a onclick="cambiarAuth('login')">Inicia sesión aquí</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <h2>🇬🇹 DeliveryPro</h2>
+      <p>© 2025 DeliveryPro. Todos los derechos reservados. Hecho con ❤️ en Guatemala.</p>
+    </div>
+  </footer>
+
+  <!-- SDK de Firebase (Conexión a la base de datos) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-check-compat.js"></script>
+  <!-- Script de reCAPTCHA Enterprise (usando la llave nueva) -->
+  <script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>
+
+  <!-- Tu script principal -->
+  <script src="js/landing.js"></script>
+</body>
+</html>

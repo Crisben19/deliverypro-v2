@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DeliveryPro | Cliente</title>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/cliente.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="brand"><span class="brand-icon">D</span> DeliveryPro</div>
+    <button class="menu-item active" onclick="cambiarSeccion('inicio', this)"><span>🏠</span> Inicio</button>
+    <button class="menu-item" onclick="cambiarSeccion('pedidos', this)"><span>🕒</span> Mis Pedidos</button>
+    <button class="menu-item" onclick="abrirPerfil()"><span>⚙️</span> Configuración</button>
+    
+    <div class="location-box">
+      <p>Entregar en:</p>
+      <strong>📍 Zona 1, Guatemala</strong>
+    </div>
+
+    <div class="profile-card" onclick="abrirPerfil()">
+      <div class="profile-avatar" id="user-avatar">J</div>
+      <div class="profile-info">
+        <div class="profile-name" id="user-name">Juan Pérez</div>
+        <div class="profile-role">Cliente</div>
+      </div>
+      <button class="btn-logout" onclick="cerrarSesion(event)">⏻</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <input type="text" class="search-input" placeholder="🔍 Buscar comercio o producto..." oninput="buscarComercios(this.value)">
+      <button class="btn-cart" onclick="toggleCart()">🛒 <span id="cart-count">0</span> - Ver Carrito</button>
+    </header>
+
+    <div class="content">
+      <section id="view-inicio" class="view active">
+        <div class="header-title"><h1>¿Qué necesitas hoy?</h1><p>Explora todo lo que tenemos cerca de ti.</p></div>
+        
+        <div class="categorias">
+          <div class="cat-item" onclick="filtrarComercios('Restaurante')"><div class="cat-icon" style="background: #FFF5F5; color: #FF5A5F;">🍔</div><span>Comida</span></div>
+          <div class="cat-item" onclick="filtrarComercios('Farmacia')"><div class="cat-icon" style="background: #E0F2FE; color: #0284C7;">💊</div><span>Farmacias</span></div>
+          <div class="cat-item" onclick="filtrarComercios('Supermercado')"><div class="cat-icon" style="background: #DCFCE7; color: #16A34A;">🛒</div><span>Supermercados</span></div>
+          <div class="cat-item" onclick="filtrarComercios('Floristería')"><div class="cat-icon" style="background: #FCE7F3; color: #DB2777;">💐</div><span>Floristerías</span></div>
+          <div class="cat-item" onclick="filtrarComercios('')"><div class="cat-icon" style="background: #F1F5F9; color: #475569;">🌐</div><span>Ver Todo</span></div>
+        </div>
+
+        <h2 class="section-subtitle" id="titulo-seccion">Comercios Cercanos</h2>
+        <div class="grid-restaurantes" id="grid-restaurantes">
+          <p class="loading-text">Cargando comercios...</p>
+        </div>
+      </section>
+
+      <section id="view-pedidos" class="view">
+        <div class="header-title"><h1>Mis Pedidos</h1><p>Rastrea el estado de tus pedidos en tiempo real.</p></div>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Orden</th><th>Comercio</th><th>Total</th><th>Estado</th><th>Acciones</th></tr></thead>
+            <tbody id="tabla-pedidos">
+              <tr><td colspan="5" class="loading-text">Cargando pedidos...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="cart-sidebar" class="cart-sidebar">
+    <div class="cart-header">
+      <h2>Tu Pedido</h2>
+      <button class="btn-close" onclick="toggleCart()">&times;</button>
+    </div>
+    <div class="cart-items" id="cart-items">
+      <p class="empty-text">Tu carrito está vacío.</p>
+    </div>
+    <div class="cart-footer">
+      <div class="cart-total"><span>Total:</span><span id="cart-total-price">$0.00</span></div>
+      <button class="btn-primary" onclick="abrirModalDireccion()">Confirmar Pedido</button>
+    </div>
+  </div>
+
+  <div id="modal-menu" class="modal-overlay">
+    <div class="modal-box menu-box">
+      <div class="menu-banner" style="background:#FF5A5F;">
+        <button class="btn-close-modal" onclick="cerrarModal('modal-menu')">&times;</button>
+        <h2 id="menu-nombre">Comercio</h2>
+        <p id="menu-desc">Descripción</p>
+      </div>
+      <div id="menu-platos" class="menu-list"></div>
+    </div>
+  </div>
+
+  <div id="modal-extras" class="modal-overlay">
+    <div class="modal-box">
+      <h2 id="extras-nombre">Producto</h2>
+      <p class="modal-subtitle">Personaliza tu pedido</p>
+      <div id="extras-grupos" class="extras-grupos"></div>
+      <div class="payment-section">
+        <label>Método de Pago</label>
+        <div class="payment-buttons">
+          <button id="btn-pago-efectivo" class="btn-pago active" onclick="seleccionarPago('efectivo')">💵 Efectivo</button>
+          <button id="btn-pago-tarjeta" class="btn-pago" onclick="seleccionarPago('tarjeta')">💳 Tarjeta</button>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="cerrarModal('modal-extras')">Cancelar</button>
+        <button class="btn-primary" onclick="confirmarAgregarAlCarrito()">Agregar al Carrito</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-direccion" class="modal-overlay">
+    <div class="modal-box">
+      <h2>Confirmar Pedido</h2>
+      <p class="modal-subtitle">Completa tus datos para la factura y entrega.</p>
+      
+      <div class="form-group">
+        <label>Nombre Completo</label>
+        <input type="text" id="input-nombre" class="input-large" placeholder="Tu nombre" required>
+      </div>
+      <div class="form-group">
+        <label>NIT (Para Factura)</label>
+        <input type="text" id="input-nit" class="input-large" placeholder="Ej: 1234567-8 o C/F" required>
+      </div>
+      <div class="form-group">
+        <label>Ciudad</label>
+        <input type="text" id="input-ciudad" class="input-large" placeholder="Ej: Guatemala" required>
+      </div>
+      <div class="form-group">
+        <label>Dirección de Entrega</label>
+        <input type="text" id="input-direccion" class="input-large" placeholder="Ej: Zona 10, Ciudad de Guatemala" required>
+      </div>
+
+      <div class="form-group">
+        <label>Método de Pago</label>
+        <div class="payment-buttons">
+          <button id="btn-pago-efectivo" class="btn-pago active" onclick="seleccionarPago('efectivo')">💵 Efectivo</button>
+          <button id="btn-pago-tarjeta" class="btn-pago" onclick="seleccionarPago('tarjeta')">💳 Tarjeta</button>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="cerrarModal('modal-direccion')">Cancelar</button>
+        <button class="btn-primary" onclick="enviarPedidoAlBackend()">Confirmar Pedido</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-detalle-pedido" class="modal-overlay">
+    <div class="modal-box" style="width: 600px; padding: 0; overflow: hidden;">
+      <div style="background: #1E293B; color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="margin: 0;">Rastreo de tu Pedido</h2>
+        <button onclick="cerrarModal('modal-detalle-pedido')" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">&times;</button>
+      </div>
+      
+      <div style="padding: 25px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid #E2E8F0; padding-bottom: 15px;">
+          <div>
+            <p style="margin: 0; color: #64748B; font-size: 0.9rem;">Orden</p>
+            <strong id="detalle-orden" style="font-size: 1.2rem; color: #1E293B;">#ORD-1234</strong>
+          </div>
+          <div style="text-align: right;">
+            <p style="margin: 0; color: #64748B; font-size: 0.9rem;">Total</p>
+            <strong id="detalle-total" style="font-size: 1.2rem; color: #10B981;">$0.00</strong>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 20px; background: #F8FAFC; padding: 15px; border-radius: 8px;">
+          <p style="margin: 0 0 5px 0; color: #64748B; font-size: 0.9rem;">Repartidor asignado:</p>
+          <strong id="detalle-repartidor" style="font-size: 1.1rem; color: #1E293B;">Esperando asignación...</strong>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <p style="margin: 0 0 10px 0; color: #64748B; font-size: 0.9rem;">Estado del Pedido:</p>
+          <span id="detalle-estado" class="badge-cat" style="background:#FEF3C7; color:#D97706; font-size: 1rem; padding: 8px 16px;">PENDIENTE</span>
+        </div>
+
+        <div id="contenedor-pin" style="margin-bottom: 20px; background: #FFF7ED; border: 1px dashed #F59E0B; padding: 15px; border-radius: 8px; display: none;">
+          <p style="margin: 0 0 5px 0; color: #92400E; font-size: 0.9rem; font-weight: 600;">🔒 Código de Seguridad (Dale este PIN al repartidor):</p>
+          <h1 id="detalle-pin" style="margin: 0; color: #EA580C; font-size: 2.5rem; letter-spacing: 5px;">0000</h1>
+        </div>
+
+        <div id="contenedor-factura" style="margin-bottom: 20px; background: #F0F9FF; border: 1px dashed #3B82F6; padding: 15px; border-radius: 8px; display: none;">
+          <p style="margin: 0 0 5px 0; color: #1E40AF; font-size: 0.9rem; font-weight: 600;">📄 Factura Electrónica</p>
+          <p style="margin: 5px 0; color: #1E40AF; font-size: 0.85rem;">UUID: <strong id="detalle-uuid">...</strong></p>
+          <button onclick="descargarFacturaDesdeDetalle()" style="margin-top: 10px; padding: 8px 16px; background: #3B82F6; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Descargar Factura (PDF)</button>
+        </div>
+
+        <div id="mapa-detalle" style="height: 250px; border-radius: 12px; margin-top: 20px; display: none; border: 1px solid #E2E8F0;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-perfil" class="modal-overlay">
+    <div class="modal-box">
+      <h2>Mi Perfil</h2>
+      <div class="perfil-avatar-container">
+        <div class="perfil-avatar-large" id="perfil-avatar">J</div>
+      </div>
+      <div class="form-group"><label>Nombre</label><input type="text" id="perfil-nombre" class="input-large" value="Juan Pérez"></div>
+      <div class="form-group"><label>Teléfono</label><input type="tel" id="perfil-telefono" class="input-large" value="5555-5555"></div>
+      <div class="form-group"><label>Dirección</label><input type="text" id="perfil-direccion" class="input-large" value="Zona 1"></div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="cerrarModal('modal-perfil')">Cancelar</button>
+        <button class="btn-primary" onclick="guardarPerfil()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-noti" class="modal-overlay">
+    <div class="modal-box noti-box">
+      <div id="noti-icon" class="noti-icon">✅</div>
+      <h2 id="noti-title">¡Éxito!</h2>
+      <p id="noti-message">Operación completada.</p>
+      <button class="btn-primary" style="width: 100%;" onclick="cerrarNoti()">Aceptar</button>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/cliente.js"></script>
+</body>
+</html>
