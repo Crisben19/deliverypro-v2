@@ -10,6 +10,7 @@ const firebaseConfig = {
 };
 
 // 2. Inicializar Firebase (App, Auth, Firestore)
+self.FIREBASE_APPCHECK_DEBUG_TOKEN = "fbf62f20-9f5a-421e-82a9-76de46927535";
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
