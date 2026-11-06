@@ -1,4 +1,4 @@
-// 1. Configuración de Firebase (Tus llaves)
+// 1. Configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBxvevJBALj730d93hCTZUSp7mqd_3EzXM",
   authDomain: "dappi-smart-delivery-driver.firebaseapp.com",
@@ -9,13 +9,12 @@ const firebaseConfig = {
   measurementId: "G-MXSWTGJS6G"
 };
 
-// 2. Inicializar Firebase
+// 2. Inicializar Firebase (App, Auth, Firestore)
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
 
 // 3. Inicializar App Check con reCAPTCHA V3
-// (Usamos ReCaptchaV3Provider para que no choque con el Auth)
 const appCheck = firebase.appCheck();
 appCheck.activate(
   new firebase.appCheck.ReCaptchaV3Provider('6Lc33RiuAAAAAJPD_mAkRmUYwNcer0coeaaNjhcET'), 
@@ -23,7 +22,7 @@ appCheck.activate(
 );
 
 // ==========================================
-// FUNCIONES DEL MODAL (Abrir/Cerrar)
+// FUNCIONES DEL MODAL
 // ==========================================
 function abrirAuth(tipo) {
   document.getElementById('modal-auth').classList.add('active');
@@ -53,7 +52,7 @@ function toggleFaq(element) {
 }
 
 // ==========================================
-// REGISTRO RÁPIDO (Formulario del inicio)
+// REGISTRO RÁPIDO (Formulario de la página)
 // ==========================================
 async function registroRapido(event) {
   event.preventDefault();
@@ -63,15 +62,12 @@ async function registroRapido(event) {
   const telefono = document.getElementById('rapido-telefono').value;
   const rol = document.getElementById('rapido-rol').value;
   
-  // Generamos una contraseña temporal aleatoria
   const passwordTemporal = Math.random().toString(36).slice(-8) + "A1!";
 
   try {
-    // 1. Creamos el usuario en Firebase Auth
     const userCredential = await auth.createUserWithEmailAndPassword(email, passwordTemporal);
     const user = userCredential.user;
 
-    // 2. Guardamos en Firestore
     await db.collection('usuarios').doc(user.uid).set({
       nombre: nombre,
       email: email,
@@ -151,7 +147,7 @@ async function loginManual(event) {
 }
 
 // ==========================================
-// LOGIN SOCIAL (Simulado)
+// LOGIN SOCIAL
 // ==========================================
 function loginSocial(red) {
   alert("La conexión con " + red + " estará disponible muy pronto.");

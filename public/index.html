@@ -112,7 +112,7 @@
   <!-- NAVBAR -->
   <nav class="navbar">
     <div class="container">
-      <div class="brand"><span>🇬🇹</span> Delivery<span>Pro</span></div>
+      <div class="brand"><span>🚀</span> Delivery<span>Pro</span></div>
       <div class="nav-buttons">
         <button class="btn-nav-outline" onclick="abrirAuth('login')">Iniciar Sesión</button>
         <button class="btn-nav-solid" onclick="abrirAuth('registro')">Regístrate</button>
@@ -124,9 +124,10 @@
   <header class="hero">
     <div class="hero-content">
       <div class="hero-text">
-        <h1>Tu delivery y mensajería <br><span class="highlight">en minutos</span></h1>
+        <h1>Delivery y mensajería <br><span class="highlight">en minutos</span></h1>
         <p class="eslogan">"Conectamos tu antojo con tu puerta, rápido y seguro."</p>
-        <p>Comida, farmacias, supermercados y más. Todo lo que necesitas, entregado por repartidores de confianza en toda Guatemala.</p>
+        <p>Comida, paquetes, documentos y más. Todo lo que necesitas, entregado por repartidores de confianza en toda Guatemala.</p>
+        <button class="btn-nav-solid" style="padding: 14px 30px; font-size: 1.1rem;" onclick="abrirAuth('registro')">Pedir Ahora 🛵</button>
       </div>
 
       <!-- FORMULARIO FLOTANTE -->
@@ -154,9 +155,6 @@
               <option value="repartidor">Repartidor (Quiero entregar)</option>
             </select>
           </div>
-          <!-- AQUI VA EL CAPTCHA CON TU LLAVE NUEVA -->
-          <div class="g-recaptcha" data-sitekey="6LdDWgwuAAAAAFjNpaYb7lpAV4_dFHvu_rISTwjZ" data-action="LOGIN" style="margin-bottom: 15px;"></div>
-          
           <button type="submit" class="btn-form">Quiero ser parte de DeliveryPro 🚀</button>
         </form>
       </div>
@@ -272,9 +270,6 @@
               <option value="repartidor">Soy Repartidor</option>
             </select>
           </div>
-          <!-- AQUI VA EL CAPTCHA CON TU LLAVE NUEVA -->
-          <div class="g-recaptcha" data-sitekey="6LdDWgwuAAAAAFjNpaYb7lpAV4_dFHvu_rISTwjZ" data-action="LOGIN" style="margin-bottom: 15px;"></div>
-          
           <button type="submit" class="btn-auth">Crear Cuenta</button>
         </form>
         <p class="auth-switch">¿Ya tienes cuenta? <a onclick="cambiarAuth('login')">Inicia sesión aquí</a></p>
@@ -290,13 +285,13 @@
     </div>
   </footer>
 
-   <!-- SDK de Firebase (Conexión a la base de datos, Auth y App Check) -->
+  <!-- SDK de Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-check-compat.js"></script>
 
-  <!-- Script de reCAPTCHA V3 (Para App Check) -->
+  <!-- reCAPTCHA V3 -->
   <script src="https://www.google.com/recaptcha/api.js?render=6Lc33RiuAAAAAJPD_mAkRmUYwNcer0coeaaNjhcET"></script>
 
   <!-- Tu script principal -->
