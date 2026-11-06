@@ -9,18 +9,10 @@ const firebaseConfig = {
   measurementId: "G-MXSWTGJS6G"
 };
 
-// 2. Inicializar Firebase (App, Auth, Firestore)
-self.FIREBASE_APPCHECK_DEBUG_TOKEN = "fbf62f20-9f5a-421e-82a9-76de46927535";
+// 2. Inicializar Firebase (App, Auth, Firestore) - LIMPIO Y SIN APP CHECK
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
-
-// 3. Inicializar App Check con reCAPTCHA V3
-const appCheck = firebase.appCheck();
-appCheck.activate(
-  new firebase.appCheck.ReCaptchaV3Provider('6Lc33RiuAAAAAJPD_mAkRmUYwNcer0coeaaNjhcET'), 
-  true
-);
 
 // ==========================================
 // FUNCIONES DEL MODAL
