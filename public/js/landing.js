@@ -1,4 +1,4 @@
-// 1. Configuración de Firebase
+// 1. Configuración de Firebase (Tus llaves)
 const firebaseConfig = {
   apiKey: "AIzaSyBxvevJBALj730d93hCTZUSp7mqd_3EzXM",
   authDomain: "dappi-smart-delivery-driver.firebaseapp.com",
@@ -11,18 +11,19 @@ const firebaseConfig = {
 
 // 2. Inicializar Firebase
 const app = firebase.initializeApp(firebaseConfig);
-
-// 3. CONFIGURAR APP CHECK (Para que funcione en localhost)
-self.FIREBASE_APPCHECK_DEBUG_TOKEN = true; 
-const appCheck = firebase.appCheck(app);
-// Aquí está el ID de tu llave de Google Cloud:
-appCheck.activate('6LdDWgwuAAAAAFjNpaYb7lpAV4_dFHvu_rISTwjZ', true); 
-
-// 4. Inicializar la base de datos Firestore
 const db = firebase.firestore();
+const auth = firebase.auth();
+
+// 3. Inicializar App Check con reCAPTCHA V3
+// (Usamos ReCaptchaV3Provider para que no choque con el Auth)
+const appCheck = firebase.appCheck();
+appCheck.activate(
+  new firebase.appCheck.ReCaptchaV3Provider('6Lc33RiuAAAAAJPD_mAkRmUYwNcer0coeaaNjhcET'), 
+  true
+);
 
 // ==========================================
-// FUNCIONES DEL MODAL (Login y Registro)
+// FUNCIONES DEL MODAL (Abrir/Cerrar)
 // ==========================================
 function abrirAuth(tipo) {
   document.getElementById('modal-auth').classList.add('active');
@@ -52,20 +53,7 @@ function toggleFaq(element) {
 }
 
 // ==========================================
-// FUNCIONES DE LOGIN (Simuladas por ahora)
-// ==========================================
-function loginSocial(red) {
-  alert("La conexión con " + red + " estará disponible muy pronto.");
-}
-
-function loginManual(event) {
-  event.preventDefault();
-  alert("El inicio de sesión manual estará disponible pronto.");
-  cerrarAuth();
-}
-
-// ==========================================
-// FUNCIÓN PARA GUARDAR EN FIREBASE (Formulario Principal)
+// REGISTRO RÁPIDO (Formulario del inicio)
 // ==========================================
 async function registroRapido(event) {
   event.preventDefault();
@@ -74,9 +62,17 @@ async function registroRapido(event) {
   const email = document.getElementById('rapido-email').value;
   const telefono = document.getElementById('rapido-telefono').value;
   const rol = document.getElementById('rapido-rol').value;
+  
+  // Generamos una contraseña temporal aleatoria
+  const passwordTemporal = Math.random().toString(36).slice(-8) + "A1!";
 
   try {
-    await db.collection('usuarios').add({
+    // 1. Creamos el usuario en Firebase Auth
+    const userCredential = await auth.createUserWithEmailAndPassword(email, passwordTemporal);
+    const user = userCredential.user;
+
+    // 2. Guardamos en Firestore
+    await db.collection('usuarios').doc(user.uid).set({
       nombre: nombre,
       email: email,
       telefono: telefono,
@@ -84,16 +80,20 @@ async function registroRapido(event) {
       fechaRegistro: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    alert("¡Éxito! Tus datos han sido guardados en Firebase. Bienvenido a DeliveryPro.");
+    alert("¡Éxito! Registro rápido completado. Bienvenido a DeliveryPro.");
     document.getElementById('form-rapido').reset();
   } catch (error) {
-    console.error("Error al guardar en Firebase:", error);
-    alert("Hubo un error al guardar. Revisa la consola (F12) para más detalles.");
+    console.error("Error al guardar:", error);
+    if (error.code === 'auth/email-already-in-use') {
+      alert("Este correo ya está registrado. Intenta iniciar sesión.");
+    } else {
+      alert("Hubo un error: " + error.message);
+    }
   }
 }
 
 // ==========================================
-// FUNCIÓN PARA GUARDAR EN FIREBASE (Modal de Registro)
+// REGISTRO MANUAL (Formulario del Modal)
 // ==========================================
 async function registroManual(event) {
   event.preventDefault();
@@ -101,10 +101,14 @@ async function registroManual(event) {
   const nombre = document.getElementById('reg-nombre').value;
   const email = document.getElementById('reg-email').value;
   const telefono = document.getElementById('reg-telefono').value;
+  const password = document.getElementById('reg-password').value;
   const rol = document.getElementById('reg-rol').value;
 
   try {
-    await db.collection('usuarios').add({
+    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+    const user = userCredential.user;
+
+    await db.collection('usuarios').doc(user.uid).set({
       nombre: nombre,
       email: email,
       telefono: telefono,
@@ -112,11 +116,43 @@ async function registroManual(event) {
       fechaRegistro: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    alert("¡Cuenta creada con éxito! Ya estás en nuestra base de datos.");
+    alert("¡Cuenta creada con éxito! Ya puedes iniciar sesión.");
     document.querySelector('#auth-registro form').reset();
     cerrarAuth();
   } catch (error) {
-    console.error("Error al guardar en Firebase:", error);
-    alert("Hubo un error al guardar. Revisa la consola (F12).");
+    console.error("Error al registrar:", error);
+    if (error.code === 'auth/email-already-in-use') {
+      alert("Este correo ya está registrado. Intenta iniciar sesión.");
+    } else if (error.code === 'auth/weak-password') {
+      alert("La contraseña es muy débil. Debe tener al menos 6 caracteres.");
+    } else {
+      alert("Error al registrar: " + error.message);
+    }
   }
+}
+
+// ==========================================
+// LOGIN REAL
+// ==========================================
+async function loginManual(event) {
+  event.preventDefault();
+  
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
+
+  try {
+    await auth.signInWithEmailAndPassword(email, password);
+    alert("¡Bienvenido de vuelta a DeliveryPro!");
+    cerrarAuth();
+  } catch (error) {
+    console.error("Error al iniciar sesión:", error);
+    alert("Correo o contraseña incorrectos.");
+  }
+}
+
+// ==========================================
+// LOGIN SOCIAL (Simulado)
+// ==========================================
+function loginSocial(red) {
+  alert("La conexión con " + red + " estará disponible muy pronto.");
 }
