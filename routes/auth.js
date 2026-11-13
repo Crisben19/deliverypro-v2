@@ -1,19 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
-const nodemailer = require('nodemailer');
-const User = require('../models/User'); // Asegúrate de que esta ruta sea correcta para tu modelo
+const { Resend } = require('resend'); 
+const User = require('../models/User'); // Asegúrate de que esta ruta sea correcta
 
-// ==========================================
-// CONFIGURACIÓN DE NODEMAILER (GMAIL)
-// ==========================================
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'bencri2019@gmail.com', // Tu correo configurado
-    pass: 'focl lsiy ymsu jycq'   // Tu contraseña de aplicación
-  }
-});
+// Inicializamos Resend con la variable de entorno que guardamos en Render
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // ==========================================
 // RUTA DE REGISTRO
@@ -43,33 +35,32 @@ router.post('/register', async (req, res) => {
 
     await newUser.save();
 
-    // 4. Enviar el correo de bienvenida
-    const mailOptions = {
-      from: '"DeliveryPro" <bencri2019@gmail.com>',
-      to: email,
-      subject: '¡Bienvenido a DeliveryPro! 🚀',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
-          <h1 style="color: #FF5A5F; text-align: center;">¡Hola ${nombre}!</h1>
-          <p style="font-size: 16px; color: #333;">Tu cuenta en DeliveryPro ha sido creada exitosamente.</p>
-          <p style="font-size: 16px; color: #333;">Te has registrado con el rol de: <strong>${rol}</strong>.</p>
-          <p style="font-size: 16px; color: #333;">Pronto recibirás más novedades y actualizaciones sobre el servicio.</p>
-          <br>
-          <p style="text-align: center; color: #999; font-size: 12px;">© 2025 DeliveryPro. Hecho en Guatemala.</p>
-        </div>
-      `
-    };
+    // 4. Enviar el correo con Resend
+    try {
+      const { data, error } = await resend.emails.send({
+        from: 'DeliveryPro <onboarding@resend.dev>',
+        to: [email], // Enviamos al correo que se registró
+        subject: '¡Bienvenido a DeliveryPro! 🚀',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+            <h1 style="color: #FF5A5F; text-align: center;">¡Hola ${nombre}!</h1>
+            <p style="font-size: 16px; color: #333;">Tu cuenta en DeliveryPro ha sido creada exitosamente.</p>
+            <p style="font-size: 16px; color: #333;">Te has registrado con el rol de: <strong>${rol}</strong>.</p>
+            <br>
+            <p style="text-align: center; color: #999; font-size: 12px;">© 2025 DeliveryPro. Hecho en Guatemala.</p>
+          </div>
+        `
+      });
 
-    // Enviamos el correo
-    transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        console.error('Error al enviar correo:', error);
+        console.error('Error de Resend:', error);
       } else {
-        console.log('Correo enviado:', info.response);
+        console.log('Correo enviado con ID:', data.id);
       }
-    });
+    } catch (emailError) {
+      console.error('Error al enviar correo:', emailError);
+    }
 
-    // 5. Responder al frontend
     res.status(201).json({ mensaje: 'Usuario registrado con éxito. Revisa tu correo.' });
 
   } catch (error) {
