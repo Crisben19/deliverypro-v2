@@ -38,19 +38,13 @@ async function registroRapido(event) {
   const email = document.getElementById('rapido-email').value;
   const telefono = document.getElementById('rapido-telefono').value;
   const rol = document.getElementById('rapido-rol').value;
-  const password = document.getElementById('rapido-password').value; // Contraseña que el usuario escribió
+  const password = document.getElementById('rapido-password').value; 
 
   try {
     const response = await fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        nombre, 
-        email, 
-        telefono, 
-        rol, 
-        password // Enviamos la contraseña real al backend
-      })
+      body: JSON.stringify({ nombre, email, telefono, rol, password })
     });
 
     const data = await response.json();
@@ -102,7 +96,7 @@ async function registroManual(event) {
 }
 
 // ==========================================
-// LOGIN (Formulario del Modal)
+// LOGIN CON REDIRECCIÓN POR ROL (La Magia)
 // ==========================================
 async function loginManual(event) {
   event.preventDefault();
@@ -120,14 +114,26 @@ async function loginManual(event) {
     const data = await response.json();
 
     if (response.ok) {
-      alert("¡Bienvenido de vuelta a DAPPI, " + data.nombre + "!");
+      // Guardamos los datos del usuario para usarlos en los paneles
+      localStorage.setItem('usuarioDappi', JSON.stringify(data));
       
-      // Aquí luego programaremos la redirección a los paneles (cliente.html, etc.)
-      // Por ahora solo cerramos el modal.
-      cerrarAuth();
+      alert("¡Bienvenido a DAPPI, " + data.nombre + "!");
+      
+      // REDIRECCIÓN SEGÚN EL ROL
+      if (data.rol === 'cliente') {
+        window.location.href = '/cliente.html';
+      } else if (data.rol === 'restaurante') {
+        window.location.href = '/restaurante.html';
+      } else if (data.rol === 'repartidor') {
+        window.location.href = '/repartidor.html';
+      } else if (data.rol === 'admin') {
+        window.location.href = '/admin.html'; 
+      } else {
+        alert("Rol no reconocido.");
+      }
       
     } else {
-      alert(data.mensaje || "Correo o contraseña incorrectos.");
+      alert(data.mensaje || "Credenciales inválidas.");
     }
   } catch (error) {
     console.error("Error al iniciar sesión:", error);
@@ -135,9 +141,6 @@ async function loginManual(event) {
   }
 }
 
-// ==========================================
-// LOGIN SOCIAL (Botones de Google/Outlook/Yahoo)
-// ==========================================
 function loginSocial(red) {
   alert("La conexión con " + red + " estará disponible muy pronto.");
 }
