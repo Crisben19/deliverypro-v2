@@ -21,7 +21,7 @@ function cambiarAuth(tipo) {
 }
 
 // ==========================================
-// FUNCIONES DE LA SECCIÓN FAQ (Preguntas Frecuentes)
+// FUNCIONES DEL FAQ
 // ==========================================
 function toggleFaq(element) {
   const item = element.parentElement;
@@ -30,7 +30,6 @@ function toggleFaq(element) {
 
 // ==========================================
 // REGISTRO RÁPIDO (Formulario de la página principal)
-// Envía los datos al servidor de Node.js (Render)
 // ==========================================
 async function registroRapido(event) {
   event.preventDefault();
@@ -39,20 +38,18 @@ async function registroRapido(event) {
   const email = document.getElementById('rapido-email').value;
   const telefono = document.getElementById('rapido-telefono').value;
   const rol = document.getElementById('rapido-rol').value;
-  
-  // Generamos una contraseña temporal automática (el usuario luego la cambia)
-  const passwordTemporal = Math.random().toString(36).slice(-8) + "A1!";
+  const password = document.getElementById('rapido-password').value; // Contraseña que el usuario escribió
 
   try {
     const response = await fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        nombre: nombre,
-        email: email,
-        telefono: telefono,
-        rol: rol,
-        password: passwordTemporal
+      body: JSON.stringify({ 
+        nombre, 
+        email, 
+        telefono, 
+        rol, 
+        password // Enviamos la contraseña real al backend
       })
     });
 
@@ -72,7 +69,6 @@ async function registroRapido(event) {
 
 // ==========================================
 // REGISTRO MANUAL (Formulario del Modal)
-// Envía los datos al servidor de Node.js (Render)
 // ==========================================
 async function registroManual(event) {
   event.preventDefault();
@@ -87,13 +83,7 @@ async function registroManual(event) {
     const response = await fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        nombre: nombre,
-        email: email,
-        telefono: telefono,
-        rol: rol,
-        password: password
-      })
+      body: JSON.stringify({ nombre, email, telefono, rol, password })
     });
 
     const data = await response.json();
@@ -113,7 +103,6 @@ async function registroManual(event) {
 
 // ==========================================
 // LOGIN (Formulario del Modal)
-// Envía los datos al servidor de Node.js (Render)
 // ==========================================
 async function loginManual(event) {
   event.preventDefault();
@@ -131,9 +120,12 @@ async function loginManual(event) {
     const data = await response.json();
 
     if (response.ok) {
-      alert("¡Bienvenido de vuelta a DeliveryPro!");
-      // Aquí podrías guardar el token del usuario si tu backend lo genera
+      alert("¡Bienvenido de vuelta a DAPPI, " + data.nombre + "!");
+      
+      // Aquí luego programaremos la redirección a los paneles (cliente.html, etc.)
+      // Por ahora solo cerramos el modal.
       cerrarAuth();
+      
     } else {
       alert(data.mensaje || "Correo o contraseña incorrectos.");
     }
