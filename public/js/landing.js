@@ -1,21 +1,5 @@
-// 1. Configuración de Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyBxvevJBALj730d93hCTZUSp7mqd_3EzXM",
-  authDomain: "dappi-smart-delivery-driver.firebaseapp.com",
-  projectId: "dappi-smart-delivery-driver",
-  storageBucket: "dappi-smart-delivery-driver.firebasestorage.app",
-  messagingSenderId: "31152518272",
-  appId: "1:31152518272:web:ea3b9e635922e8f16ce265",
-  measurementId: "G-MXSWTGJS6G"
-};
-
-// 2. Inicializar Firebase (App, Auth, Firestore) - LIMPIO Y SIN APP CHECK
-const app = firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const auth = firebase.auth();
-
 // ==========================================
-// FUNCIONES DEL MODAL
+// FUNCIONES DEL MODAL (Abrir, Cerrar, Cambiar)
 // ==========================================
 function abrirAuth(tipo) {
   document.getElementById('modal-auth').classList.add('active');
@@ -37,7 +21,7 @@ function cambiarAuth(tipo) {
 }
 
 // ==========================================
-// FUNCIONES DEL FAQ
+// FUNCIONES DE LA SECCIÓN FAQ (Preguntas Frecuentes)
 // ==========================================
 function toggleFaq(element) {
   const item = element.parentElement;
@@ -45,7 +29,8 @@ function toggleFaq(element) {
 }
 
 // ==========================================
-// REGISTRO RÁPIDO (Formulario de la página)
+// REGISTRO RÁPIDO (Formulario de la página principal)
+// Envía los datos al servidor de Node.js (Render)
 // ==========================================
 async function registroRapido(event) {
   event.preventDefault();
@@ -55,34 +40,39 @@ async function registroRapido(event) {
   const telefono = document.getElementById('rapido-telefono').value;
   const rol = document.getElementById('rapido-rol').value;
   
+  // Generamos una contraseña temporal automática (el usuario luego la cambia)
   const passwordTemporal = Math.random().toString(36).slice(-8) + "A1!";
 
   try {
-    const userCredential = await auth.createUserWithEmailAndPassword(email, passwordTemporal);
-    const user = userCredential.user;
-
-    await db.collection('usuarios').doc(user.uid).set({
-      nombre: nombre,
-      email: email,
-      telefono: telefono,
-      rol: rol,
-      fechaRegistro: firebase.firestore.FieldValue.serverTimestamp()
+    const response = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nombre: nombre,
+        email: email,
+        telefono: telefono,
+        rol: rol,
+        password: passwordTemporal
+      })
     });
 
-    alert("¡Éxito! Registro rápido completado. Bienvenido a DeliveryPro.");
-    document.getElementById('form-rapido').reset();
+    const data = await response.json();
+
+    if (response.ok) {
+      alert("¡Registro exitoso! Revisa tu correo electrónico para confirmar tu cuenta.");
+      document.getElementById('form-rapido').reset();
+    } else {
+      alert("Error: " + (data.mensaje || "No se pudo registrar"));
+    }
   } catch (error) {
     console.error("Error al guardar:", error);
-    if (error.code === 'auth/email-already-in-use') {
-      alert("Este correo ya está registrado. Intenta iniciar sesión.");
-    } else {
-      alert("Hubo un error: " + error.message);
-    }
+    alert("Hubo un error de conexión con el servidor.");
   }
 }
 
 // ==========================================
 // REGISTRO MANUAL (Formulario del Modal)
+// Envía los datos al servidor de Node.js (Render)
 // ==========================================
 async function registroManual(event) {
   event.preventDefault();
@@ -94,34 +84,36 @@ async function registroManual(event) {
   const rol = document.getElementById('reg-rol').value;
 
   try {
-    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-    const user = userCredential.user;
-
-    await db.collection('usuarios').doc(user.uid).set({
-      nombre: nombre,
-      email: email,
-      telefono: telefono,
-      rol: rol,
-      fechaRegistro: firebase.firestore.FieldValue.serverTimestamp()
+    const response = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nombre: nombre,
+        email: email,
+        telefono: telefono,
+        rol: rol,
+        password: password
+      })
     });
 
-    alert("¡Cuenta creada con éxito! Ya puedes iniciar sesión.");
-    document.querySelector('#auth-registro form').reset();
-    cerrarAuth();
+    const data = await response.json();
+
+    if (response.ok) {
+      alert("¡Cuenta creada con éxito! Revisa tu correo electrónico.");
+      document.querySelector('#auth-registro form').reset();
+      cerrarAuth();
+    } else {
+      alert("Error: " + (data.mensaje || "No se pudo registrar"));
+    }
   } catch (error) {
     console.error("Error al registrar:", error);
-    if (error.code === 'auth/email-already-in-use') {
-      alert("Este correo ya está registrado. Intenta iniciar sesión.");
-    } else if (error.code === 'auth/weak-password') {
-      alert("La contraseña es muy débil. Debe tener al menos 6 caracteres.");
-    } else {
-      alert("Error al registrar: " + error.message);
-    }
+    alert("Hubo un error de conexión con el servidor.");
   }
 }
 
 // ==========================================
-// LOGIN REAL
+// LOGIN (Formulario del Modal)
+// Envía los datos al servidor de Node.js (Render)
 // ==========================================
 async function loginManual(event) {
   event.preventDefault();
@@ -130,17 +122,29 @@ async function loginManual(event) {
   const password = document.getElementById('login-password').value;
 
   try {
-    await auth.signInWithEmailAndPassword(email, password);
-    alert("¡Bienvenido de vuelta a DeliveryPro!");
-    cerrarAuth();
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      alert("¡Bienvenido de vuelta a DeliveryPro!");
+      // Aquí podrías guardar el token del usuario si tu backend lo genera
+      cerrarAuth();
+    } else {
+      alert(data.mensaje || "Correo o contraseña incorrectos.");
+    }
   } catch (error) {
     console.error("Error al iniciar sesión:", error);
-    alert("Correo o contraseña incorrectos.");
+    alert("Error de conexión con el servidor.");
   }
 }
 
 // ==========================================
-// LOGIN SOCIAL
+// LOGIN SOCIAL (Botones de Google/Outlook/Yahoo)
 // ==========================================
 function loginSocial(red) {
   alert("La conexión con " + red + " estará disponible muy pronto.");
